@@ -23,7 +23,7 @@ void GaussianMask(double *mask,int width,int height,double deta)
 
 void GaussianFilter(unsigned char *src,unsigned char *dst,int width,int height,int m_width,int m_height,double deta)
 {
-    double * mask=(double *)malloc(sizeof(double)*m_width*m_height);
+	double * mask=(double *)malloc(sizeof(double)*m_width*m_height);
     GaussianMask(mask, m_width, m_height, deta);
     RealRelevant(src,dst,mask,width,height,m_width,m_height);
     free(mask);
@@ -32,7 +32,7 @@ void GaussianFilter(unsigned char *src,unsigned char *dst,int width,int height,i
 void RealRelevant(unsigned char *src,unsigned char *dst,double *mask,
                   int width,int height,int m_width,int m_height)
 {
-    double *temp=(double *)malloc(sizeof(double)*width*height);
+	unsigned char *temp=(unsigned char *)malloc(sizeof(unsigned char)*width*height);
     if(temp==NULL){
         printf("realrelecant:malloc wrong\n");
         exit(0);
@@ -42,7 +42,7 @@ void RealRelevant(unsigned char *src,unsigned char *dst,double *mask,
 
     for(int j=0;j<height;j++)
         for(int i=0;i<width;i++){
-            double value=0.0;
+        	unsigned char value=0.0;
             for(int n=0;n<m_height;n++)
                 for(int m=0;m<m_width;m++){
                     if((i+m-mask_center_x)<width&&(j+n-mask_center_y)<height&&
@@ -60,4 +60,25 @@ void RealRelevant(unsigned char *src,unsigned char *dst,double *mask,
 double Distance(double x,double y,double c_x,double c_y){
 
     return sqrt((x-c_x)*(x-c_x)+(y-c_y)*(y-c_y));
+}
+
+
+void MeanMask(double *mask,int width,int height)
+{
+    double w=width;
+    double h=height;
+    double meanvalue=1.0/(w*h);
+    for(int i=0;i<width*height;i++)
+        mask[i]=meanvalue;
+}
+
+
+void MeanFilter(unsigned char *src,unsigned char *dst,int width,int height,int m_width,int m_height)
+{
+	double * mask=(double *)malloc(sizeof(double)*m_width*m_height);
+
+    MeanMask(mask, m_width, m_height);
+    RealRelevant(src,dst,mask,width,height,m_width,m_height);
+
+    free(mask);
 }
