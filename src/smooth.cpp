@@ -32,8 +32,9 @@ void GaussianFilter(unsigned char *src,unsigned char *dst,int width,int height,i
 void RealRelevant(unsigned char *src,unsigned char *dst,double *mask,
                   int width,int height,int m_width,int m_height)
 {
-	unsigned char *temp=(unsigned char *)malloc(sizeof(unsigned char)*width*height);
-    if(temp==NULL){
+    unsigned char *temp=(unsigned char *)malloc(sizeof(unsigned char)*width*height);
+    if(temp==NULL)
+   {
         printf("realrelecant:malloc wrong\n");
         exit(0);
     }
@@ -41,17 +42,20 @@ void RealRelevant(unsigned char *src,unsigned char *dst,double *mask,
     int mask_center_y=m_height/2;
 
     for(int j=0;j<height;j++)
-        for(int i=0;i<width;i++){
+        for(int i=0;i<width;i++)
+	{
         	unsigned char value=0.0;
-            for(int n=0;n<m_height;n++)
-                for(int m=0;m<m_width;m++){
+              for(int n=0;n<m_height;n++)
+                for(int m=0;m<m_width;m++)
+		  {
                     if((i+m-mask_center_x)<width&&(j+n-mask_center_y)<height&&
-                       (i+m-mask_center_x)>=0&&(j+n-mask_center_y)>=0){
+                       (i+m-mask_center_x)>=0&&(j+n-mask_center_y)>=0)
+                   {
                         value+=src[(j+n-mask_center_y)*width+(i+m-mask_center_x)]*mask[n*m_width+m];
                     }
                 }
             temp[j*width+i]=value;
-        }
+       }
     for(int i=0;i<width*height;i++)
         dst[i]=temp[i];
     free(temp);
@@ -82,3 +86,5 @@ void MeanFilter(unsigned char *src,unsigned char *dst,int width,int height,int m
 
     free(mask);
 }
+
+

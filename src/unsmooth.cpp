@@ -36,3 +36,10 @@ void matrixAdd(unsigned char *src1,unsigned char *src2,unsigned char *dst,int wi
     for(int i=0;i<width*height;i++)
         dst[i]=src1[i]+src2[i];
 }
+
+void matrixCopy(unsigned char *src,unsigned char *dst,int width,int height)
+{
+    for(int i=0;i<width*height;i++)
+        dst[i]=src[i];
+}
+

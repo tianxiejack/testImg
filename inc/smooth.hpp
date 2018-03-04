@@ -14,4 +14,6 @@ double Distance(double x,double y,double c_x,double c_y);
 void MeanFilter(unsigned char *src,unsigned char *dst,int width,int height,int m_width,int m_height);
 void MeanMask(double *mask,int width,int height);
 
+
+
 #endif

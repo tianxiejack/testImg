@@ -3,6 +3,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "test2.hpp"
+#include "test3.hpp"
 #include "test7.hpp"
 
 using namespace std;
@@ -11,6 +12,7 @@ using namespace cv;
 int main()
 {
 	//test2();
-	test7();
+	test3();
+	//test7();
 	return 0;
 }

@@ -14,5 +14,6 @@ void UnsharpMasking(unsigned char *src,unsigned char *dst,int width,int height,i
 void matrixSub(unsigned char *src1,unsigned char *src2,unsigned char *dst,int width,int height);
 void matrixMultreal(unsigned char *src,unsigned char *dst,double k,int width,int height);
 void matrixAdd(unsigned char *src1,unsigned char *src2,unsigned char *dst,int width,int height);
+void matrixCopy(unsigned char *src,unsigned char *dst,int width,int height);
 
 #endif
