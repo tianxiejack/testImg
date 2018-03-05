@@ -11,8 +11,8 @@ using namespace cv;
 
 int main()
 {
-	//test2();
-	test3();
+	test2();
+	//test3();
 	//test7();
 	return 0;
 }
