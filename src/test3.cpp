@@ -3,8 +3,6 @@
 #include "stdio.h"
 #include "test3.hpp"
 #include "base.hpp"
-#include "unsmooth.hpp"
-#include "smooth.hpp"
 #include "test7.hpp"
 
 using namespace cv;
@@ -143,19 +141,15 @@ void MatrixAdd(unsigned char *src,unsigned char *dst,int width,int height)
 	for(j = 0;j<height - 1;j++)
 		for(i = 0;i<width -1 ;i++)
 		{
-			tmp[j*width + i] = (src[j*width + i] + tmp[j*width + i]);//(unsigned char)
-			//dst[j*width + i] = tmp[j*width + i];
+			tmp[j*width + i] = (src[j*width + i] + tmp[j*width + i]);
 			if(tmp[j*width + i] < 0)
 				dst[j*width + i] = 0;
 			else if(tmp[j*width + i] >  255)
 				dst[j*width + i] = 255;
 			else
 				dst[j*width + i] = tmp[j*width + i];
-			//printf("j = %d,i = %d,pixel = %d\n",j,i,tmp[j*width + i]);
 		}
 
-
-	//dst[j+width + i] = (src1[j*width + i] - src2[j+width + i]);
 	free(tmp);
 	return ;
 }
