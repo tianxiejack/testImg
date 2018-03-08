@@ -5,6 +5,7 @@
 #include "test2.hpp"
 #include "test3.hpp"
 #include "test5.hpp"
+#include "test6.hpp"
 #include "test7.hpp"
 #include "test8.hpp"
 
@@ -16,7 +17,8 @@ int main()
 	//test2();
 	//test3();
 	//test5();
+	test6();
 	//test7();
-	test8();
+	//test8();
 	return 0;
 }
