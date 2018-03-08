@@ -15,8 +15,8 @@ int main()
 {
 	//test2();
 	//test3();
-	test5();
-	//test7();
+	//test5();
+	test7();
 	//test8();
 	return 0;
 }

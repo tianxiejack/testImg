@@ -4,8 +4,7 @@
 
 void test7();
 
-void getPicB(unsigned char* src,unsigned char *dst,int width ,int height);
-
-
+void getPic(const unsigned char* in, unsigned char* out,short cols, short rows,unsigned char xoy);
+void getPicX(const unsigned char* in, unsigned char* out,short cols, short rows,unsigned char xoy);
 
 #endif
