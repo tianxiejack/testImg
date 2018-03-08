@@ -20,7 +20,7 @@ void DFT(double * src,Complex * dst,int size)
 {
     clock_t start,end;
     start=clock();
-	printf("size=  %d\n",size);
+    printf("size=  %d\n",size);
     for(int m=0;m<size;m++)
     {
         double real=0.0;

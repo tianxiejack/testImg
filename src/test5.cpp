@@ -10,16 +10,23 @@ void test5()
 {
 
 	cv::Mat src = cv::imread("5.png", 2);
-	cv::Mat dst1 = cv::Mat(src.rows,src.cols,CV_8UC1);
-	cv::Mat dst2 = cv::Mat(src.rows,src.cols,CV_8UC1);
-	cv::Mat dst3 = cv::Mat(src.rows,src.cols,CV_8UC1);
-	cv::Mat dst4 = cv::Mat(src.rows,src.cols,CV_8UC1);
+
 
 	if (src.empty()){
 		printf("imread failed \n");
 		return ;
 	}
 
+	int width=ChangtoPower2(src.cols);
+	int height=ChangtoPower2(src.rows);
+
+	cv::Mat dst1 = cv::Mat(height,width,CV_8UC1);
+	cv::Mat dst2 = cv::Mat(src.rows,src.cols,CV_8UC1);
+	cv::Mat dst3 = cv::Mat(src.rows,src.cols,CV_8UC1);
+	cv::Mat dst4 = cv::Mat(src.rows,src.cols,CV_8UC1);
+
+
+	FrequencyFiltering(src.data,dst1.data,src.cols,src.rows,20);
 
 
 
@@ -35,11 +42,8 @@ void test5()
 	cvMoveWindow("d",400,100);
 	cvMoveWindow("e",500,100);
 
-
-	FrequencyFiltering(src.data,dst3.data,src.cols,src.rows,20);
-
-
 	cv::imshow("src",src);
+	cv::imshow("b",dst1);
 
 	cv::waitKey(0);
 
@@ -53,8 +57,7 @@ void FrequencyFiltering(unsigned char* src1,unsigned char* dst,int width,int hei
 	//unsigned char *rectmp = (unsigned char*)malloc(1*width*height);
 	//Resize_xt(src1,rectmp,width,height);
 	
-	int fft_width  = width*2;
-	int fft_height = height*2;
+
 	double* src =  (double*)malloc(sizeof(double)*width*height);
 	double* dst1 = (double*)malloc(sizeof(double)*width*height);
 
@@ -64,17 +67,40 @@ void FrequencyFiltering(unsigned char* src1,unsigned char* dst,int width,int hei
 			src[ll*width + kk] = (double)src1[ll*width + kk];
 			//printf("src[%d*width + %d] = %f\n",ll,kk,src[ll*width + kk]);
 		}
-	
+
+//////////111111111111		
+	/*
+	int fft_width  = width*2;
+	int fft_height = height*2;
+	double *filter=(double *)malloc(sizeof(double)*fft_height*fft_width);
+	if(filter==NULL)
+	{
+		printf("frequency filter malloc faile");
+		exit(0);
+	}
+	FFT_Shift(src,width, height);
+	Complex *getap = (Complex *)malloc(sizeof(Complex)*width*height);;
+	DFT(src,getap,width*height);
+	GaussianLPFilter(filter, fft_width, fft_height, param);
+	*/
+
+//////////222222222222
+
+		
 	ResizeMatrix4FFT(src, &temp, width, height);
-return ;	
+	width = ChangtoPower2(width);
+	height = ChangtoPower2(height);
+
+
+ 	int fft_width  = 2*width;
+    int fft_height = 2*height;
+
 	double *filter=(double *)malloc(sizeof(double)*fft_height*fft_width);
 	if(filter==NULL)
 	{
 	    printf("frequency filter malloc faile");
 	    exit(0);
 	}
-
-	return ;
 
 	Complex *temp_complex=(Complex*)malloc(sizeof(Complex)*fft_height*fft_width);
 	if(temp_complex==NULL)
@@ -83,26 +109,42 @@ return ;
 		exit(0);
 	}
 
-	ImageFFT(src, temp_complex,fft_width,fft_height);
+	/*
+	unsigned char* iii = (unsigned char*)malloc(fft_width*fft_height);
+    	for(int ll = 0; ll < fft_height - 1; ll++)
+		for(int kk = 0; kk < fft_width -1 ; kk++)
+			iii[ll*fft_width + kk] = (unsigned char)temp[ll*fft_width + kk];
+	cv::Mat qqq = cv::Mat(fft_height,fft_width,CV_8UC1,iii);
+	cv::imshow("123",qqq);
+	cv::waitKey(0);
+	*/
+	GaussianHPFilter(filter,fft_width,fft_height,50);
 
+	//GaussianLPFilter(filter, fft_width, fft_height, param);
+	
+	ImageFFT(temp, temp_complex,fft_width,fft_height);
+	MatrixMulti_R_C(filter,temp_complex,temp_complex,fft_width*fft_height);
 
-   // MatrixMulti_R_C(filter,temp_complex,temp_complex,fft_width*fft_height);
-   // ImageIFFT(temp_complex, temp, fft_width, fft_height);
-   // double *result2=(double *)malloc(sizeof(double)*width*height);
-   // CutImage421(temp,fft_width,fft_height,result2,width,height);
-   // matrixCopy(result2, dst1, width, height);
+	#if 1
+	    for(int ll = 0; ll < fft_width - 1; ll++)
+	    		for(int kk = 0; kk < fft_width -1 ; kk++)
+	    			printf("filter[%d*fft_width + %d] = %f\n",ll,kk,filter[ll*fft_width + kk]);
+	#endif
+	
+	ImageIFFT(temp_complex, temp, fft_width, fft_height);
+       double *result2=(double *)malloc(sizeof(double)*fft_width/2*fft_height/2);
+	   
+       CutImage421(temp,fft_width,fft_height,result2,fft_width/2,fft_height/2);
+       matrixCopy(result2, dst1, fft_width/2, fft_height/2);
 
-	for(int ll = 0; ll < height - 1; ll++)
-		for(int kk = 0; kk<width -1 ; kk++)
-			dst[ll*width + kk] = (unsigned char)dst1[ll*width + kk];
-
+	for(int ll = 0; ll < 512 - 1; ll++)
+		for(int kk = 0; kk < 512 -1 ; kk++)
+			dst[ll*512 + kk] = (unsigned char)temp[ll*512 + kk];
 
 
    // free(result2);
-    free(filter);
-    free(temp_complex);
-    free(src1);
-    free(dst1);
+  //  free(filter);
+   // free(temp_complex);
     //free(rectmp);
     return;
 }
@@ -121,6 +163,19 @@ void Resize_xt(unsigned char* src,unsigned char* dst,int width,int height)
 	return ;
 }
 
+void matrixCopy_x(double *src,double *dst,int width,int height)
+{
+	#if 0
+   	for(int i=0;i<width*height;i++)
+      	 	dst[i]=src[i];
+	#else
+	for(int j=0;j<height;j++)
+		for(int i=0;i<width;i++)
+			dst[j*2*width + i] = src[j*width + i];
+	#endif
+	return ;
+}
+
 void ResizeMatrix4FFT(double *src,double **dst,int width,int height)
 {
     int re_width=ChangtoPower2(width);
@@ -128,10 +183,24 @@ void ResizeMatrix4FFT(double *src,double **dst,int width,int height)
     double *temp=(double *)malloc(sizeof(double)*re_width*re_height);
     Resize(src, width, height, temp, re_width, re_height);
     *dst=(double *)malloc(sizeof(double)*re_width*re_height*4);
-
     Zero(*dst, re_width*2, re_height*2);
-    matrixCopy(temp, *dst, re_width, re_height);
-    free(temp);
+    matrixCopy_x(temp, *dst, re_width, re_height);
+
+    /*
+    double * ddd = *dst;    
+    unsigned char* haha = (unsigned char*)malloc(1*4*re_width*re_height);
+    for(int ll = 0; ll <2* re_height - 1; ll++)
+    		for(int kk = 0; kk < 2* re_width -1 ; kk++)
+    			haha[ll* 2*re_width + kk] = (unsigned char)ddd[ll* 2*re_width + kk];
+
+
+   cv::Mat iii = cv::Mat( 2*re_height, 2*re_width,CV_8UC1,haha);
+   cv::imshow("iii",iii);
+   cv::waitKey(0);
+   return ;
+   */
+	
+   free(temp);
 }
 
 void Resize(double *src,int s_width,int s_height,double *dst,int d_width,int d_height)
@@ -179,11 +248,11 @@ int ChangtoPower2(int size)
 {
     size--;
     int i=0;
-    while ((size/=2)>0) {
+    while ((size/=2)>0)
+    {
         i++;
     }
     return 2<<i;
-
 }
 
 
@@ -202,11 +271,20 @@ void GaussianLPFilter(double *Filter,int width,int height,double cut_off_frequen
 {
     int center_x=width/2;
     int center_y=height/2;
+
+	cut_off_frequency  =60;
     for(int i=0;i<width;i++)
         for(int j=0;j<height;j++)
         {
             double value=Distance((double)i, (double)j, center_x, center_y);
             Filter[j*width+i]=exp(-value*value/(2*cut_off_frequency*cut_off_frequency));
+
+		//printf("value = %f\n",value);
+		//printf("exp(value)/(2) = %f\n",exp(value*value/(2*60*60)));
+		Filter[j*width+i]  = 1.0/exp(value*value/(2*100*100));
+		//printf(" Filter[j*width+i]=%10.20f\n", Filter[j*width+i]);
+		//putchar(10);
+		//putchar(10);
         }
 }
 
@@ -238,8 +316,15 @@ void MatrixMulti_R_C(double *src1,Complex *src2,Complex *dst,int size)
 {
     for(int i=0;i<size;i++)
     {
+    		printf("real = %f\n",dst[i].real);
+	    printf("imagin = %f\n",dst[i].imagin);
+
         dst[i].real=src2[i].real*src1[i];
         dst[i].imagin=src2[i].imagin*src1[i];
+
+
+	printf("111real = %f\n",dst[i].real);
+	    printf("111imagin = %f\n",dst[i].imagin);
     }
 }
 
@@ -266,7 +351,7 @@ void ImageIFFT(Complex *src,double *dst,int size_w,int size_h)
     free(temp);
     free(temp_c);
     free(temp_d);
-
+    return ;
 }
 
 double getPower(Complex *src,int totalsize)
@@ -290,11 +375,25 @@ void ImageFFT(double * src,Complex * dst,int width,int height)
 
     matrixCopy(src, image_data, width, height);
     FFT_Shift(image_data,width, height);
-
     FFT2D(image_data, dst, width, height);
     //DFT(image_data, dst,width*height);
 
-    free(image_data);
+#if 0
+    for(int ll = 0; ll < height - 1; ll++)
+    		for(int kk = 0; kk < width -1 ; kk++)
+    			printf("dst[%d*width + %d] = %f\n",ll,kk,dst[ll*width + kk]);
+
+	unsigned char* iii = (unsigned char*)malloc(width*height);
+	for(int ll = 0; ll < height - 1; ll++)
+		for(int kk = 0; kk < width -1 ; kk++)
+			iii[ll*width + kk] = (unsigned char)image_data[ll*width + kk];
+		
+	cv::Mat qqq = cv::Mat(height,width,CV_8UC1,iii);
+	cv::imshow("222",qqq);
+	cv::waitKey(0);
+#endif
+	
+	free(image_data);
     return ;
 }
 
@@ -310,19 +409,24 @@ void FFT_Shift(double * src,int size_w,int size_h)
 
 void matrixCopy(double *src,double *dst,int width,int height)
 {
-    for(int i=0;i<width*height;i++)
-        dst[i]=src[i];
+	#if 1
+   	for(int i=0;i<width*height;i++)
+      	 	dst[i]=src[i];
+	#else
+	for(int j=0;j<height;j++)
+		for(int i=0;i<width;i++)
+			dst[j*2*width + i] = src[j*width + i];
+	#endif
+	return ;
 }
 
 int FFT2D(double *src,Complex *dst,int size_w,int size_h)
 {
-
     if(isBase2(size_w)==-1||isBase2(size_h)==-1)
     {
-    	printf("not match 1<<k \n");
+       printf("not match 1<<k \n");
        exit(0);
     }
-
 
     Complex *temp=(Complex *)malloc(sizeof(Complex)*size_h*size_w);
     if(temp==NULL)
@@ -549,6 +653,7 @@ int isBase2(int size_n)
     while (k/=2)
         z++;
 
+    k = z;
     if(size_n!=(1<<k))
         return -1;
     else
@@ -560,15 +665,18 @@ void RealFFT(double * src,Complex * dst,int size_n)
 
     int k=size_n;
     int z=0;
-    /*
-    while (k/=2) 
-        z++;
 	
+    while (k/=2) 
+    {
+        z++;
+    }
     k=z;
     if(size_n!=(1<<k))
+    {
+    	printf("RealFFT size_n error \n");
         exit(0);
-	*/
-
+    }
+	
     Complex * src_com=(Complex*)malloc(sizeof(Complex)*size_n);
     if(src_com==NULL)
         exit(0);
@@ -611,4 +719,24 @@ void RealFFT(double * src,Complex * dst,int size_n)
     free(src_com);
 
 }
+
+
+void GaussianHPFilter(double *Filter,int width,int height,double cut_off_frequency)
+{  
+    int center_x=width/2;  
+    int center_y=height/2;  
+    for(int i=0;i<width;i++)  
+        for(int j=0;j<height;j++){  
+            double value=Distance(i, j, center_x, center_y);  
+            Filter[j*width+i]=1.0-exp(-value*value/(2*cut_off_frequency*cut_off_frequency));  
+
+		//printf("value = %f\n",value);
+		//printf("exp(value)/(2) = %f\n",exp(value*value/(2*60*60)))
+		printf(" Filter[j*width+i]=%f\n", Filter[j*width+i]);
+
+	}  
+    Filter[width*(height+1)/2]+=1.0;  
+
+	
+}  
 

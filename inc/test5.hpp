@@ -51,6 +51,6 @@ void IFFT(Complex * src,Complex * dst,int size_n);
 int isBase2(int size_n);
 void RealFFT(double * src,Complex * dst,int size_n);
 
-
+void GaussianHPFilter(double *Filter,int width,int height,double cut_off_frequency);
 
 #endif

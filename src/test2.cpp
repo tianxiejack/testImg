@@ -76,7 +76,7 @@ void generateGaussianTemplate(double *GaussMask, int ksize, double Sigmma)
 	{
 		 for(j = 0;j < SIZE;j++)
 	 {
-		 GaussMask[i*SIZE + j] = Gaussian_Temp[i][j]/sum;//归一化处理
+		 GaussMask[i*SIZE + j] = Gaussian_Temp[i][j]/sum;
 		 //printf("%f ",GaussMask[i*SIZE + i]);
 	 }
 		 //printf("\n");
