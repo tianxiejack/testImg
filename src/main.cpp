@@ -10,6 +10,9 @@
 #include "test8.hpp"
 #include "test_delaunay.hpp"
 
+
+#include "test1_1.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -29,12 +32,23 @@ int main(int argc , char** argv)
 {
 
 
+	//test1_1();
+	//test1_2();			//对数变换
+	//test1_3();			//liner
+	//test1_4();			//gamma
+	//test1_5();			//zhifangtu
+
+
+
+
 	//test_triangle();
 
 	//test2();
 	//test3();
 	//test6();
 	//test7();
+
+
 
 	//test5();
 	//test8();
