@@ -68,24 +68,6 @@ void FrequencyFiltering(unsigned char* src1,unsigned char* dst,int width,int hei
 			//printf("src[%d*width + %d] = %f\n",ll,kk,src[ll*width + kk]);
 		}
 
-//////////111111111111		
-	/*
-	int fft_width  = width*2;
-	int fft_height = height*2;
-	double *filter=(double *)malloc(sizeof(double)*fft_height*fft_width);
-	if(filter==NULL)
-	{
-		printf("frequency filter malloc faile");
-		exit(0);
-	}
-	FFT_Shift(src,width, height);
-	Complex *getap = (Complex *)malloc(sizeof(Complex)*width*height);;
-	DFT(src,getap,width*height);
-	GaussianLPFilter(filter, fft_width, fft_height, param);
-	*/
-
-//////////222222222222
-
 		
 	ResizeMatrix4FFT(src, &temp, width, height);
 	width = ChangtoPower2(width);
@@ -93,7 +75,7 @@ void FrequencyFiltering(unsigned char* src1,unsigned char* dst,int width,int hei
 
 
  	int fft_width  = 2*width;
-    int fft_height = 2*height;
+   	int fft_height = 2*height;
 
 	double *filter=(double *)malloc(sizeof(double)*fft_height*fft_width);
 	if(filter==NULL)
@@ -118,9 +100,9 @@ void FrequencyFiltering(unsigned char* src1,unsigned char* dst,int width,int hei
 	cv::imshow("123",qqq);
 	cv::waitKey(0);
 	*/
-	GaussianHPFilter(filter,fft_width,fft_height,50);
+	//GaussianHPFilter(filter,fft_width,fft_height,50);
 
-	//GaussianLPFilter(filter, fft_width, fft_height, param);
+	GaussianLPFilter(filter, fft_width, fft_height, param);
 	
 	ImageFFT(temp, temp_complex,fft_width,fft_height);
 	MatrixMulti_R_C(filter,temp_complex,temp_complex,fft_width*fft_height);
@@ -272,20 +254,23 @@ void GaussianLPFilter(double *Filter,int width,int height,double cut_off_frequen
     int center_x=width/2;
     int center_y=height/2;
 
-	cut_off_frequency  =60;
+	cut_off_frequency  =100;
     for(int i=0;i<width;i++)
         for(int j=0;j<height;j++)
         {
             double value=Distance((double)i, (double)j, center_x, center_y);
             Filter[j*width+i]=exp(-value*value/(2*cut_off_frequency*cut_off_frequency));
-
-		//printf("value = %f\n",value);
-		//printf("exp(value)/(2) = %f\n",exp(value*value/(2*60*60)));
-		Filter[j*width+i]  = 1.0/exp(value*value/(2*100*100));
-		//printf(" Filter[j*width+i]=%10.20f\n", Filter[j*width+i]);
-		//putchar(10);
-		//putchar(10);
         }
+
+	/*
+	double  tt = 0.0;
+	for(int i=0;i<width;i++)
+         for(int j=0;j<height;j++)
+		tt += Filter[j*width+i];
+	//printf("Filter[%d*width+%d] = %f\n",j,i,Filter[j*width+i]);
+	//printf("tt = %f\n",tt);
+	*/
+
 }
 
 void CutImage421(double *src,int s_width,int s_height,double *dst,int d_width,int d_height)
@@ -314,17 +299,22 @@ int matrixCopyLocal(double *src,double *dst,int width,int height,int w_width,int
 
 void MatrixMulti_R_C(double *src1,Complex *src2,Complex *dst,int size)
 {
+	double tt;
+	for(int i=0;i<size;i++)
+		tt += src1[i];
+		printf("ttttttttttttttttttttttttttttttt = %f\n",tt);//62831.xxxxx
+	
     for(int i=0;i<size;i++)
     {
-    		printf("real = %f\n",dst[i].real);
-	    printf("imagin = %f\n",dst[i].imagin);
+    	  //printf("real = %f\n",dst[i].real);
+	  // printf("imagin = %f\n",dst[i].imagin);
 
         dst[i].real=src2[i].real*src1[i];
         dst[i].imagin=src2[i].imagin*src1[i];
 
 
-	printf("111real = %f\n",dst[i].real);
-	    printf("111imagin = %f\n",dst[i].imagin);
+	//printf("111real = %f\n",dst[i].real);
+	//printf("111imagin = %f\n",dst[i].imagin);
     }
 }
 

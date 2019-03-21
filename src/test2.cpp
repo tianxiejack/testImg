@@ -50,44 +50,41 @@ void test2()
 }
 
 
-void generateGaussianTemplate(double *GaussMask, int ksize, double Sigmma)
+void generateGaussianTemplate(double *GaussMask, double Sigmma)
 {
-	#define SIZE 3
 	#define PI 3.1415926
-
+	const int ksize = 3;
 	double weight;
 	double sum = 0;
-	//double Sigmma = 1;
 
-	double Gaussian_Temp[SIZE][SIZE] = {0};
+	double Gaussian_Temp[ksize][ksize] = {0};
 	int i,j;
 
 	weight = 2*PI*Sigmma*Sigmma;
-	for(i =0;i <SIZE;i++)
+	for(i =0;i <ksize;i++)
 	{
-	 for(j = 0;j < SIZE;j++)
-	 {
-		 Gaussian_Temp[i][j] =weight* exp(-((i-SIZE/2)*(i-SIZE/2)+(j-SIZE/2)*(j-SIZE/2))/(2.0*Sigmma*Sigmma));
-		 sum += Gaussian_Temp[i][j];
-	 }
+		for(j = 0;j < ksize;j++)
+		{
+			Gaussian_Temp[i][j] =weight* exp(-((i-ksize/2)*(i-ksize/2)+(j-ksize/2)*(j-ksize/2))/(2.0*Sigmma*Sigmma));
+			sum += Gaussian_Temp[i][j];
+		}
 	}
 
-	for(i = 0; i < SIZE;i++)
+	for(i = 0; i < ksize;i++)
 	{
-		 for(j = 0;j < SIZE;j++)
+		 for(j = 0;j < ksize;j++)
 	 {
-		 GaussMask[i*SIZE + j] = Gaussian_Temp[i][j]/sum;
-		 //printf("%f ",GaussMask[i*SIZE + i]);
+		 GaussMask[i*ksize + j] = Gaussian_Temp[i][j]/sum;
+		 //printf("%f ",GaussMask[i*ksize + i]);
 	 }
 		 //printf("\n");
 	}
-
 }
 
 void GaussFilter(unsigned char* src,unsigned char* dst ,int width ,int height)
 {
 	double GaussMask[3*3] = {0};
-	generateGaussianTemplate(GaussMask,3,1);
+	generateGaussianTemplate(GaussMask,1);
 
 	int *tmp = (int*)malloc(sizeof(int)*width*height);
 	memset(tmp,0,sizeof(int)*width*height);

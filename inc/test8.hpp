@@ -37,4 +37,5 @@ void Threshold(unsigned char *src,unsigned char *dst,int width,int height,double
 void setHistogram(unsigned char *src,int *hist,int width,int height);
 void InitHistogram(int *hist);
 
+void Hough(unsigned char *src,int width,int height, int *pR, int *pTh, int iThreshold);
 #endif

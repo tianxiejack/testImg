@@ -4,18 +4,20 @@
 #include "stdio.h"
 #include "test8.hpp"
 #include "test5.hpp"
-
+#include "test7.hpp"
 
 
 using namespace cv;
 
 void test8()
 {
+	int pR,pTh;
+		
 	Mat src = imread("houfutest.png", 2);
 	Mat dst1 = Mat(src.rows,src.cols,CV_8UC1);
 	Mat dst2 = Mat(src.rows,src.cols,CV_8UC1);
-
-
+Mat dst3 = Mat(src.rows,src.cols,CV_8UC1);
+memcpy(dst3.data,src.data,src.rows*src.cols);
 	cvNamedWindow("src",CV_WINDOW_AUTOSIZE);
 	cvNamedWindow("b",CV_WINDOW_AUTOSIZE);
 	cvNamedWindow("c",CV_WINDOW_AUTOSIZE);
@@ -23,12 +25,15 @@ void test8()
 	cvMoveWindow("src",100,100);
 	cvMoveWindow("b",200,100);
 	cvMoveWindow("c",300,100);
-	
-	//HoughLine(src.data,dst1.data,src.cols,src.rows,20);
 
-	//MeanThreshold(src.data,dst1.data,src.cols,src.rows,3);
-	HoughLine(src.data,dst2.data,src.cols,src.rows,100);
+
+	getPic(src.data,dst1.data,src.cols,src.rows,0);
 	
+	HoughLine(dst1.data,dst2.data,src.cols,src.rows,100);
+	//Hough(dst1.data,src.cols,src.rows,&pR,&pTh,100);
+
+	//printf("pR =%d,pTh = %d\n",pR,pTh);
+	//DrawLine(dst3.data,src.cols,src.rows,pTh,pR);
 
 	imshow("src",src);
 	imshow("b",dst1);
@@ -103,11 +108,7 @@ void SHT(int x,int y,int zero,double * polar)
    {
 
         int p_y=(int)((sin(angle)*y+cos(angle)*x))+zero;
-	
-   
         polar[p_y*POLARWIDTH+i]++;
-	//if(p_y >= 754)
-		//printf(" polar[%d*POLARWIDTH+%d] = %f\n", p_y,i,polar[p_y*POLARWIDTH+i]);
         angle+=angle_step;
     }
 	
@@ -390,7 +391,7 @@ void HoughLine_x(unsigned char *src,unsigned char *dst,int width,int height,int 
       
         if(iMax >= iThreshold)  
         {  
-            *pR = iRMaxIndex;  
+            *pR  = iRMaxIndex;
             *pTh = iThMaxIndex;  
         }  
       
@@ -398,3 +399,74 @@ void HoughLine_x(unsigned char *src,unsigned char *dst,int width,int height,int 
       
         return;  
     } // end of Hough  
+
+
+
+    void change()
+    {
+    	const int MinTheta=0;
+    	const int MaxTheta = 180;
+    	int i,j;
+    	int w,h;
+    	int cosV,sinV;
+    	int **count,max,nmax;
+    	int theta,thro;
+
+#if 0
+    	nmax=(int)sqrt(width*width+height*height);
+    	count = new int * [MaxTheta];  
+    	for (i = 0; i < MaxTheta; i++)  
+    	{   
+    		count[i] = new int[nmax];   
+    		memset(count[i], 0, sizeof(int) * nmax);  
+    	}
+    	// 统计count值  BYTE *pCur = pImg; 
+     	for(theta = MinTheta; theta < MaxTheta; theta += 1)  
+    	{   
+    		cosV = (int)(cos(PI * theta / 180) * 2048);   
+    		sinV = (int)(sin(PI * theta / 180) * 2048);   
+    		for(h = 0; h < height; h++)   
+    		{    
+    			for(w = 0; w < width; w++)  
+    	 			{ 
+    				    if(*(pCur + h * width + w) == FIT_POINT_PIX_VAL)      
+    					{     
+    						thro = (w * cosV + h * sinV)>>11;      
+    						if(thro < nmax && thro > 0)      
+    						{       
+    							count[theta][thro]++;      
+    						}     
+    					} 
+    			   } 
+    		} 
+    	}
+
+    	// 求取出现次数最多的count所对应的theta和thro 
+     	for(i = MinTheta; i < MaxTheta; i++)  
+    	{   
+    		for(j = 0; j < nmax; j++)   
+    		{    
+    			if(count[i][j] > max)    
+    			{     
+    				max = count[i][j];     
+    				theta = i;     
+    				thro = j;       
+    			}   
+        	}
+
+     		k = - 1.0 / tan(PI * theta / 180);  
+    		b = thro / sin(PI * theta / 180);   
+
+    		// delete 
+    		for(i = 0; i < MaxTheta; i++)  
+    		{  
+    			delete []count[i];  
+    		} 
+    		delete []count; 
+    	} 
+#endif
+
+
+    }
+
+
