@@ -33,25 +33,23 @@ int main(int argc , char** argv)
 
 
 	//test1_1();
-	//test1_2();			//对数变换
+	//test1_2();			//logtrans
 	//test1_3();			//liner
 	//test1_4();			//gamma
 	//test1_5();			//zhifangtu
-	 //test1_6();			//mediumlvbo
+	//test1_6();			//mediumlvbo
 	//test1_7();			//junzhilb
+	//test1_8();				//laplace
 
 
 
-
-
+	//test3();	//kuluAssemble
+	//test7(); 			//by
 
 	//test_triangle();
 
 	//test2();
-	//test3();
 	//test6();
-	//test7();
-
 
 
 	//test5();

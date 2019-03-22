@@ -32,7 +32,9 @@ void myMedianBlur(Mat& src, Mat& dst,const int kSize)
 }
 int test1_6( )
 {
-  cv::Mat image = imread("../image/flower3.jpg",0);
+  //cv::Mat image = imread("../image/flower3.jpg",0);
+  cv::Mat image = imread("../image/xray.tif",0);
+
   if(!image.data)
       return -1;
   cv::imshow("image", image);
