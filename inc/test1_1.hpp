@@ -14,6 +14,7 @@ void test1_2();
 int test1_3();
 int test1_4();
 int test1_5();
-
+int test1_6();
+int test1_7();
 
 #endif /* TEST1_1_HPP_ */

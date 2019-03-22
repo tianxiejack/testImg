@@ -37,6 +37,10 @@ int main(int argc , char** argv)
 	//test1_3();			//liner
 	//test1_4();			//gamma
 	//test1_5();			//zhifangtu
+	 //test1_6();			//mediumlvbo
+	//test1_7();			//junzhilb
+
+
 
 
 
